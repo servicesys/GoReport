@@ -1,0 +1,44 @@
+{
+  "name": "sales_by_region",
+  "version": "1.0",
+  "description": "Relatório de total de vendas agrupado por região, com filtro por data e status.",
+  "query": "SELECT region, SUM(amount) as total_sales FROM sales WHERE sale_date >= @start_date AND sale_date <= @end_date AND status = @status GROUP BY region ORDER BY total_sales DESC;",
+  "params": [
+    {
+      "name": "start_date",
+      "type": "date",
+      "required": true,
+      "description": "Data de início do período de análise (formato YYYY-MM-DD).",
+      "default": "now(-30d)"
+    },
+    {
+      "name": "end_date",
+      "type": "date",
+      "required": true,
+      "description": "Data de fim do período de análise (formato YYYY-MM-DD).",
+      "default": "now()"
+    },
+    {
+      "name": "status",
+      "type": "enum",
+      "required": true,
+      "description": "O status do pedido a ser considerado.",
+      "default": "completed",
+      "validation": {
+        "values": ["completed", "shipped", "pending"]
+      }
+    }
+  ],
+  "output": {
+    "formats": ["json", "csv", "xlsx"],
+    "field_mapping": {
+      "region": "Região",
+      "total_sales": "Total de Vendas"
+    }
+  },
+  "security": {
+    "max_rows": 1000,
+    "require_auth": true
+  },
+  "cache_ttl": "1h"
+}

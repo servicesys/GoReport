@@ -1,0 +1,39 @@
+{
+  "name": "character_history_report",
+  "version": "1.0",
+  "description": "Relatório de histórico de personagens por período",
+  "query": "SELECT id, character_id, history_log, created_at FROM \"CharacterHistory\" WHERE created_at >= @start_date AND created_at <= @end_date ORDER BY created_at;",
+  "params": [
+    {
+      "name": "start_date",
+      "type": "date",
+      "required": true,
+      "description": "Data inicial para filtrar o histórico (YYYY-MM-DD)",
+      "validation": {
+        "format": "YYYY-MM-DD",
+        "min": "2020-01-01"
+      }
+    },
+    {
+      "name": "end_date",
+      "type": "date",
+      "required": true,
+      "default": "now()",
+      "description": "Data final para filtrar o histórico (YYYY-MM-DD). Padrão é a data atual."
+    }
+  ],
+  "output": {
+    "formats": ["json", "csv"],
+    "field_mapping": {
+      "id": "record_id",
+      "character_id": "character_identifier",
+      "history_log": "log_details",
+      "created_at": "creation_timestamp"
+    },
+    "metadata": {
+      "author": "Game Data Team",
+      "purpose": "Análise de Atividade de Personagens",
+      "data_source": "CharacterHistory Table"
+    }
+  }
+}
