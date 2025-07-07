@@ -4,29 +4,27 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
+	"reports-system/internal/domain/entities"
 	"strconv"
 	"time"
 
-	"reports-system/internal/domain/entities"
-
-	_ "github.com/lib/pq"
+	_ "github.com/denisenkom/go-mssqldb"
 )
 
-type PostgresDB struct {
+type SqlServerDB struct {
 	db *sql.DB
 }
 
-func (p *PostgresDB) NewDB() (entities.Database, error) {
+func (p *SqlServerDB) NewDB() (entities.Database, error) {
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
-
-	db, err := sql.Open("postgres", connStr)
+	connStr := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", user, password, host, port, dbname)
+	fmt.Println("Connecting to SQL Server with connection string:", connStr)
+	db, err := sql.Open("sqlserver", connStr)
 	if err != nil {
 		return nil, err
 	}
@@ -50,18 +48,18 @@ func (p *PostgresDB) NewDB() (entities.Database, error) {
 		return nil, err
 	}
 
-	return &PostgresDB{db: db}, nil
+	return &SqlServerDB{db: db}, nil
 }
 
-func (p *PostgresDB) Query(query string, args ...interface{}) (*sql.Rows, error) {
+func (p *SqlServerDB) Query(query string, args ...interface{}) (*sql.Rows, error) {
 	return p.db.Query(query, args...)
 }
 
-func (p *PostgresDB) QueryRow(query string, args ...interface{}) *sql.Row {
+func (p *SqlServerDB) QueryRow(query string, args ...interface{}) *sql.Row {
 	return p.db.QueryRow(query, args...)
 }
 
-func (p *PostgresDB) Health() entities.DBHealth {
+func (p *SqlServerDB) Health() entities.DBHealth {
 	stats := p.db.Stats()
 	return entities.DBHealth{
 		MaxConns:  stats.MaxOpenConnections,
@@ -71,6 +69,6 @@ func (p *PostgresDB) Health() entities.DBHealth {
 	}
 }
 
-func (p *PostgresDB) Close() error {
+func (p *SqlServerDB) Close() error {
 	return p.db.Close()
 }

@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"reports-system/internal/app/handlers"
+	"reports-system/internal/domain/entities"
 	"reports-system/internal/infra/cache"
 	"reports-system/internal/infra/database"
 	"reports-system/internal/usecase"
@@ -20,11 +21,34 @@ func main() {
 	}
 
 	// Inicializar banco de dados
-	db, err := database.NewPostgresDB()
-	if err != nil {
-		log.Fatal("Failed to connect to database:", err)
+	if os.Getenv("DB_TYPE") == "" || os.Getenv("DB_HOST") == "" {
+		log.Fatal("Database connection details are not set in environment variables")
 	}
-	defer db.Close()
+
+	var db entities.Database
+	var err error
+
+	if os.Getenv("DB_TYPE") == "postgres" {
+		log.Println("Using Postgres database")
+		postgress := database.PostgresDB{}
+		db, err = postgress.NewDB()
+
+		if err != nil {
+			log.Fatal("Failed to connect to database:", err)
+		}
+		defer db.Close()
+
+	} else if os.Getenv("DB_TYPE") == "sqlserver" {
+		log.Println("Using SQL Server database")
+		sqlServer := database.SqlServerDB{}
+		db, err = sqlServer.NewDB()
+		if err != nil {
+			log.Fatal("Failed to connect to database:", err)
+		}
+		defer db.Close()
+	} else {
+		log.Fatal("Unsupported database type. Please set DB_TYPE to 'postgres' or 'sql	server'")
+	}
 
 	// Inicializar cache
 	cacheProvider := cache.NewMemoryCache()

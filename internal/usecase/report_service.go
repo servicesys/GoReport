@@ -73,6 +73,7 @@ func (s *ReportService) GetReport(reportID string, params map[string]interface{}
 
 	// Executar query
 	sqlQuery, args := query.BuildQuery(params)
+	fmt.Printf("Executing query: %s with args: %v\n", sqlQuery, args)
 	rows, err := s.db.Query(sqlQuery, args...)
 	if err != nil {
 		return nil, fmt.Errorf("query execution error: %w", err)

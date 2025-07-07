@@ -1,0 +1,34 @@
+{
+    "name": "authors_report",
+    "version": "1.0",
+    "description": "Relatório de autores por estado",
+    "query": "SELECT au_id, au_lname, au_fname, city, phone, state, contract  FROM pubs.dbo.authors WHERE contract=@ctr;",
+    "params": [
+        {
+            "name": "ctr" , 
+            "type": "bool",
+            "required": true,
+            "description": "Contract para filtrar os autores"
+        }
+    ],
+    "output": {
+        "formats": [
+            "json",
+            "csv"
+        ],
+        "field_mapping": {
+            "au_id" : "id",  
+            "au_lname": "last_name",
+            "au_fname":"first_name",
+            "city": "city",
+            "phone": "phone",
+            "state": "state",
+            "contract": "contract"
+        },
+        "metadata": {
+            "author": "Authors",
+            "purpose": "List of Authors by State",
+            "data_source": "Authors Table"
+        }
+    }
+}

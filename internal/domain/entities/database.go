@@ -13,6 +13,7 @@ type DBHealth struct {
 }
 
 type Database interface {
+	NewDB() (Database, error)
 	Query(query string, args ...interface{}) (*sql.Rows, error)
 	QueryRow(query string, args ...interface{}) *sql.Row
 	Health() DBHealth
