@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	_ "github.com/denisenkom/go-mssqldb"
+	_ "github.com/microsoft/go-mssqldb"
 )
 
 type SqlServerDB struct {
@@ -17,13 +17,13 @@ type SqlServerDB struct {
 
 func (p *SqlServerDB) NewDB() (entities.Database, error) {
 	host := os.Getenv("DB_HOST")
-	port := os.Getenv("DB_PORT")
+	//port := os.Getenv("DB_PORT")
 	user := os.Getenv("DB_USER")
 	password := os.Getenv("DB_PASSWORD")
 	dbname := os.Getenv("DB_NAME")
 
-	connStr := fmt.Sprintf("sqlserver://%s:%s@%s:%s?database=%s", user, password, host, port, dbname)
-	fmt.Println("Connecting to SQL Server with connection string:", connStr)
+	connStr := fmt.Sprintf("sqlserver://%s:%s@%s?database=%s&encrypt=disable", user, password, host, dbname)
+	//fmt.Println("Connecting to SQL Server with connection string:", connStr)
 	db, err := sql.Open("sqlserver", connStr)
 	if err != nil {
 		return nil, err
@@ -52,6 +52,7 @@ func (p *SqlServerDB) NewDB() (entities.Database, error) {
 }
 
 func (p *SqlServerDB) Query(query string, args ...interface{}) (*sql.Rows, error) {
+	fmt.Println("Executing query:", query, "with args:", args)
 	return p.db.Query(query, args...)
 }
 

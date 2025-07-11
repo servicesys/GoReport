@@ -1,6 +1,7 @@
 package query
 
 import (
+	"database/sql"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -267,7 +268,6 @@ func (q *ConfigQuery) convertDateFormat(format string) string {
 	for old, new := range replacements {
 		result = strings.ReplaceAll(result, old, new)
 	}
-
 	return result
 }
 
@@ -327,8 +327,8 @@ func (q *ConfigQuery) BuildQuery(params map[string]interface{}) (string, []inter
 	for paramName, paramValue := range params {
 		placeholder := "@" + paramName
 		if strings.Contains(query, placeholder) {
-			query = strings.ReplaceAll(query, placeholder, fmt.Sprintf("$%d", paramIndex))
-			args = append(args, paramValue)
+			//query = strings.ReplaceAll(query, placeholder, fmt.Sprintf("$%d", paramIndex))
+			args = append(args, sql.Named(paramName, paramValue))
 			paramIndex++
 		}
 	}

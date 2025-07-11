@@ -1,0 +1,38 @@
+{
+    "name": "sales_by_date_report",
+    "version": "1.0",
+    "description": "Relatório de vendas a partir de uma data de pedido específica, listando detalhes da loja, número do pedido, data, quantidade, termos de pagamento e ID do título.",
+    "query": "SELECT stor_id, ord_num, ord_date, qty, payterms, title_id FROM pubs.dbo.sales WHERE ord_date  >= @order_dt ORDER BY ord_date;",
+    "params": [
+        {
+            "name": "order_dt",
+            "type": "date",
+            "required": true,
+            "description": "Data inicial dos pedidos a serem incluídos no relatório (YYYY-MM-DD).",
+            "validation": {
+                "format": "YYYY-MM-DD"
+              
+            }
+        }
+    ],
+    "output": {
+        "formats": [
+            "json",
+            "csv"
+        ],
+        "field_mapping": {
+            "stor_id": "store_id",
+            "ord_num": "order_number",
+            "ord_date": "order_date",
+            "qty": "quantity",
+            "payterms": "payment_terms",
+            "title_id": "book_title_id"
+        },
+        "metadata": {
+            "author": "Sales Department",
+            "purpose": "Análise de vendas e rastreamento de pedidos recentes.",
+            "data_source": "pubs.dbo.sales table",
+            "refresh_frequency": "hourly"
+        }
+    }
+}

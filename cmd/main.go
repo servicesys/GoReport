@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -32,9 +33,11 @@ func main() {
 		log.Println("Using Postgres database")
 		postgress := database.PostgresDB{}
 		db, err = postgress.NewDB()
-
 		if err != nil {
+
+			fmt.Printf("Failed to connect to database: %s\n", err.Error())
 			log.Fatal("Failed to connect to database:", err)
+
 		}
 		defer db.Close()
 
